@@ -10,14 +10,31 @@ const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
+let player1Wins = 0;
+let player2Wins = 0;
 
 /** makeBoard: create in-JS board structure:
  *   board = array of rows, each row is array of cells  (board[y][x])
  */
 
 function makeBoard() {
+  board = [];  // Clear the board array
   for (let y = 0; y < HEIGHT; y++) {
     board.push(Array.from({ length: WIDTH }));
+  }
+}
+
+/** updateHtmlBoard: update the HTML representation of the board */
+function updateHtmlBoard() {
+  const htmlBoard = document.getElementById('board');
+
+  for (let y = 0; y < HEIGHT; y++) {
+    for (let x = 0; x < WIDTH; x++) {
+      const spot = document.getElementById(`${y}-${x}`);
+      while (spot.firstChild) {
+        spot.removeChild(spot.firstChild);
+      }
+    }
   }
 }
 
@@ -80,6 +97,27 @@ function placeInTable(y, x) {
 
 function endGame(msg) {
   alert(msg);
+
+  // clear the board
+  for (let y = 0; y < HEIGHT; y++) {
+    for (let x = 0; x < WIDTH; x++) {
+      board[y][x] = null;
+    }
+  }
+  console.log(board)
+
+  //board = []
+  //makeBoard();
+  //makeHtmlBoard();
+  //console.log(board)
+
+  // Update HTML board to reflect the changes
+  updateHtmlBoard();
+
+  document.querySelector('#player1Score').textContent = player1Wins
+  document.querySelector('#player2Score').textContent = player2Wins
+
+
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -100,6 +138,13 @@ function handleClick(evt) {
 
   // check for win
   if (checkForWin()) {
+    // there's a winner
+    if (currPlayer === 1) {
+      player1Wins = player1Wins + 1;
+    }
+    else {
+      player2Wins = player2Wins + 1;
+    }
     return endGame(`Player ${currPlayer} won!`);
   }
 
